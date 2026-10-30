@@ -28,7 +28,18 @@ Cada execução termina com uma seção de **validação** que informa `OK` ou `
 
 ##  Vídeos
 
-Dentro da pasta **`Video/`** estão os vídeos explicando cada problema clássico: modelagem, threads, recursos compartilhados, regiões críticas, semáforos, estratégia contra deadlock e a execução com a validação.
+Os vídeos de explicação e validação estão disponíveis neste link (também registrado em [`Videos/Link.md`](Videos/Link.md)):
+
+https://drive.google.com/drive/folders/1LHBTZUZua-vTxBMmGT6k8T2pzeCzd1vB?usp=sharing
+
+Eles explicam cada problema clássico: modelagem, threads, recursos compartilhados, regiões críticas, semáforos, estratégia contra deadlock e a execução com a validação.
+
+---
+
+##  Escopo em relação ao enunciado
+
+- **Parte I – item (a) Produtor/Consumidor:** exercício de editar, compilar e executar o código de exemplo do enunciado. Ele **não** faz parte deste repositório.
+- **Parte II – itens (b) a (g):** os 6 problemas abaixo foram implementados com threads e semáforos.
 
 ---
 
@@ -48,18 +59,21 @@ Dentro da pasta **`Video/`** estão os vídeos explicando cada problema clássic
 ##  Estrutura
 
 ```text
-trabalhoPraticoSO/
-│   └── trabalhoPraticoSO/
-│       ├── MainGeral.java              ← menu para escolher o problema
-│       └── Codigos/
-│           ├── barbeiroDominhoco/Main.java
-│           ├── leitorEscritor/Main.java
-│           ├── fumantes/Main.java
-│           ├── filosofos/Main.java
-│           ├── selvagens/Main.java
-│           └── tresrobos/Main.java
-├── Video/                              ← vídeos de explicação e validação
+trabalhoPraticoSO-main/
+├── MainGeral.java                  ← menu para escolher o problema
+├── Codigos/
+│   ├── barbeiroDominhoco/Main.java
+│   ├── leitorEscritor/Main.java
+│   ├── fumantes/Main.java
+│   ├── filosofos/Main.java
+│   ├── selvagens/Main.java
+│   └── tresrobos/Main.java
+├── Videos/
+│   └── Link.md                     ← link dos vídeos de explicação e validação
+└── README.md
 ```
+
+> Os arquivos usam `package trabalhoPraticoSO...`; ao compilar com `-d out`, o `javac` cria a estrutura de pacotes dentro de `out/` automaticamente.
 
 ---
 
@@ -76,9 +90,17 @@ javac -version
 
 ### Opção 1 – Menu geral (recomendado)
 
+Na **raiz do repositório** (a pasta que contém `MainGeral.java` e `Codigos/`):
 
 ```bash
-javac -d out $(find src -name "*.java")
+# Linux / macOS / Git Bash
+javac -d out MainGeral.java Codigos/*/Main.java
+java -cp out trabalhoPraticoSO.MainGeral
+```
+
+```powershell
+# Windows (PowerShell)
+javac -d out MainGeral.java (Get-ChildItem Codigos -Recurse -Filter Main.java).FullName
 java -cp out trabalhoPraticoSO.MainGeral
 ```
 
@@ -103,7 +125,7 @@ Menu exibido:
 java -cp out trabalhoPraticoSO.Codigos.filosofos.Main
 ```
 
-Troque `filosofos` por qualquer pasta da tabela acima.
+Troque `filosofos` por qualquer pasta da tabela acima (é necessário ter compilado antes, como na Opção 1).
 
 ---
 
@@ -111,7 +133,7 @@ Troque `filosofos` por qualquer pasta da tabela acima.
 
 | Problema | Threads | Recurso / região crítica | Semáforos (valor inicial) | Estratégia anti-deadlock |
 |----------|---------|--------------------------|---------------------------|--------------------------|
-|  **Barbeiro** | 1 barbeiro + 10 clientes | `waiting` (cadeiras ocupadas) | `customers`(0), `barbers`(0), `mutex`(1) | `mutex` sempre liberado antes de bloquear em `barbers` |
+|  **Barbeiro** | 1 barbeiro + 10 clientes (3 cadeiras de espera) | `waiting` (cadeiras ocupadas) | `customers`(0), `barbers`(0), `mutex`(1) | `mutex` sempre liberado antes de bloquear em `barbers` |
 |  **Leitores/Escritores** | 3 leitores + 2 escritores | vetor `M` e contador `rc` | `db`(1), `mutex`(1) | Sem espera circular; 1º leitor trava `db` e o último libera |
 |  **Fumantes** | 1 representante + 3 fumantes | mesa (2 ingredientes) | `agente`(1), `fumante[3]`(0) | Só o representante decide quem acorda |
 |  **Filósofos** | 5 filósofos | 5 hashis | `hashi[5]`(1), `mesa`(4) | No máximo 4 disputando hashis ao mesmo tempo |
@@ -131,7 +153,7 @@ Ao final de cada execução aparece a seção `--- VALIDACAO ---`:
 | Problema | O que é verificado |
 |----------|--------------------|
 |  Barbeiro | Atendidos + desistentes = total de clientes, e sala de espera vazia no fim |
-|  Leitores/Escritores | Nenhuma leitura inconsistente; escritas sempre exclusivas; leituras em paralelo |
+|  Leitores/Escritores | Nenhuma leitura inconsistente (vetor sempre com valores iguais); nenhum leitor e escritor, nem dois escritores, ao mesmo tempo na região crítica |
 |  Fumantes | Um cigarro por rodada, sempre com o fumante correto |
 |  Filósofos | Nenhum par de vizinhos come ao mesmo tempo; todos completam as refeições |
 |  Selvagens | Porções servidas = esperado; ninguém se serve com o caldeirão vazio |
